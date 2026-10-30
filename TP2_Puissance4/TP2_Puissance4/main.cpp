@@ -126,7 +126,6 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 				system("pause");
 			} while (columnPlayed < 1 || columnPlayed > 7 || checkColumnFull(myTableau, columnPlayed-1));
 
-			//InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
 			tokenLine = InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
 		}
 #pragma region IA
@@ -171,9 +170,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 		if (CheckVictory(myTableau, tokenLine, columnPlayed-1, isPlayerTurn)) // verifier le gagnant
 		{
 			cout << "Tu as trouve un gagnant" << endl;
-			cout << "\033[93m" << "CheckVictory ? " << (CheckVictory(myTableau, tokenLine, columnPlayed - 1, isPlayerTurn) ? "True" : "False") << "\033[0m" << endl;
 
-			system("pause");
 			if (isPlayerTurn) 
 			{
 				cout << "Le gagnant est PLAYER" << endl;
@@ -184,7 +181,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 			}
 			break;
 		}
-		/*
+		
 		else if (CheckGridFull(myTableau))
 		{
 			//Si oui Match null
@@ -193,7 +190,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 			break;
 		}
 		//Si non // Alors t'as pas de gagnant, et ta grille est pas pleine. Donc ça tourne
-		*/
+		
 
 		cout << "\033[31m" << "FIN DU TOUR" << "\033[0m" << endl;
 		system("pause");
