@@ -150,30 +150,27 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 
 			InsertJeton(myTableau, random, isPlayerTurn);
 		}
+
 		//Tu as insere le jeton. maintenant faut 
 		if (CheckVictory(myTableau, line, columnPlayed, isPlayerTurn)) // verifier le gagnant
 		{
-
+			break;
 		}
-		// 
-
-		//				Si oui gagnant break
-		//				else if
-		//CheckGridFull(myTableau);
-		//				Si oui Match null
+		else if (CheckGridFull(myTableau))
+		{
+			//Si oui Match null
+			cout << "\033[95m" << "MATCH NUL" << "\033[0m" << endl;
+			system("pause");
+			break;
+		}
 		//				Si non // Alors t'as pas de gagnant, et ta grille est pas pleine. Donc ça tourne
 
 
-		//{
-			// break;
-		//}
-		//else if (CheckGridFull())
-		//{
-			//break;
-		//}
-
 		isPlayerTurn = !isPlayerTurn;
-	}
+	}//fin du while ici
+
+	//LOGIC END GAME
+
 }
 
 
@@ -324,6 +321,8 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	}
 	VictoryChecker = 1;
 #pragma endregion
+
+#pragma region DIA HAUT GAUCHE
 	//DIA HAUT GAUCHE
 	for (int i = linePlayed, j = columnPlayed; i <= line && j >= 0; i++, j--)
 	{
@@ -339,7 +338,14 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 		}
 	}
 
+	if (VictoryChecker >= 4)
+	{
+		return true;//Le return continue t il la fonction ? Oui
+	}
+	VictoryChecker = 1;
+#pragma endregion
 
+#pragma region DIA BAS GAUCHE
 	//DIA BAS GAUCHE
 	for (int i = linePlayed - 1, j = columnPlayed - 1; i >= 0 && j >= 0; i--, j--)
 	{
@@ -354,7 +360,14 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 			break;
 		}
 	}
+	if (VictoryChecker >= 4)
+	{
+		return true;//Le return continue t il la fonction ? Oui
+	}
+	VictoryChecker = 1;
+#pragma endregion
 
+#pragma region DIA HAUT DROIT
 	//DIA HAUT DROIT
 	for (int i = linePlayed, j = columnPlayed; i <= line && j <= column; i++, j++)
 	{
@@ -369,7 +382,16 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 			break;
 		}
 	}
+	if (VictoryChecker >= 4)
+	{
+		return true;//Le return continue t il la fonction ? Oui
+	}
+	VictoryChecker = 1;
 
+
+#pragma endregion
+
+#pragma region DIA BAS DROIT
 	//DIA BAS DROIT
 	for (int i = linePlayed, j = columnPlayed; i >= 0 && j <= column; i--, j++)
 	{
@@ -384,17 +406,16 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 			break;
 		}
 	}
-
-
-	cout << "\033[95m" << "Tu as actuellement " << VictoryChecker << "victoire(s) en tout" << "\033[0m" << endl;
-	system("pause");
-
 	if (VictoryChecker >= 4)
 	{
-		return true;
+		return true;//Le return continue t il la fonction ? Oui
 	}
+	VictoryChecker = 1;
+#pragma endregion
 
 
+	cout << "\033[95m" << "---Tu as fait le tour des checkVictory et tu n'as trouve aucun gagnant----" << "\033[0m" << endl;
+	system("pause");
 }
 
 void PrintTableau(char myTableau[line][column])
@@ -427,6 +448,7 @@ bool CheckGridFull(char myTableau[line][column])
 		if (myTableau[line][j] != ' ')
 		{
 			gridColumnChecker++;
+			cout << gridColumnChecker << "/" << column + 1 << " colonnes verifiees" << endl;
 
 			if (gridColumnChecker >= column)
 			{
