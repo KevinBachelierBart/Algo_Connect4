@@ -9,7 +9,7 @@ const int column = 7;
 
 //FONCTIONS PROTOTYPE-----------------------------------------------------------------------------------|
 void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn);//----------------------------------|
-void InsertJeton(char myTableau[line][column], int columPlayed, bool& isPlayerTurn);//------------------|
+int InsertJeton(char myTableau[line][column], int columPlayed, bool& isPlayerTurn);//------------------|
 void PrintTableau(char myTableau[line][column]);//----------------------------------|
 bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, bool& isPlayerTurn);//|
 void WinningScreen();//---------------------------------------------------------------------------------|
@@ -50,8 +50,8 @@ void main()
 
 	//						 0    1   2    3    4   5   6 
 	char myTableau[line][column] = {
-							{' ',' ',' ', ' ', ' ',' ',' '},//0
-							{' ',' ',' ', ' ', ' ',' ',' '},//1
+							{'X',' ',' ', ' ', ' ',' ',' '},//0
+							{'X',' ',' ', ' ', ' ',' ',' '},//1
 							{' ',' ',' ', ' ', ' ',' ',' '},//2
 							{' ',' ',' ', ' ', ' ',' ',' '},//3
 							{' ',' ',' ', ' ', ' ',' ',' '},//4
@@ -100,6 +100,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 	while (true)
 	{
 		int columnPlayed = -1;
+		int tokenLine = -1;
 
 		if (isPlayerTurn)
 		{
@@ -122,15 +123,18 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 				if (checkColumnFull(myTableau, columnPlayed))
 				{
 					//Ta colonne columnPlayed est pleine. MISSING LOGIC HERE
+
 				}
 
 			} while (columnPlayed < 1 || columnPlayed > 7);
 
-			InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
+			//InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
+			tokenLine = InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
 		}
+#pragma region IA
 		else
 		{
-			int random = rand() % 7 + 1;
+			int random = rand() % 7 + 1;//Va entre 1 et 7 
 			system("cls");
 
 			cout << "IA thinking." << endl;
@@ -145,17 +149,28 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 			Sleep(500);
 			system("cls");
 
-			cout << "\033[95m" << "Le random trouve = " << "\033[0m" << random << endl;
+			//cout << "\033[95m" << "Le random trouve = " << "\033[0m" << random << endl;
+			cout << "\033[95m" << "La colonne visee est = " << "\033[0m" << random-1 << endl;
 			system("pause");
 
-			InsertJeton(myTableau, random, isPlayerTurn);
+			//InsertJeton(myTableau, random, isPlayerTurn);
+			tokenLine = InsertJeton(myTableau, random-1, isPlayerTurn);
+			columnPlayed = random;
 		}
+#pragma endregion
+
+		
+		PrintTableau(myTableau);
+
+		cout << "columnPlayed = [" << columnPlayed-1 << "]"<< endl;
 
 		//Tu as insere le jeton. maintenant faut 
-		if (CheckVictory(myTableau, line, columnPlayed, isPlayerTurn)) // verifier le gagnant
+		if (CheckVictory(myTableau, tokenLine, columnPlayed-1, isPlayerTurn)) // verifier le gagnant
 		{
+			cout << "Tu as trouve un gagnant" << endl;
 			break;
 		}
+		/*
 		else if (CheckGridFull(myTableau))
 		{
 			//Si oui Match null
@@ -163,18 +178,22 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 			system("pause");
 			break;
 		}
-		//				Si non // Alors t'as pas de gagnant, et ta grille est pas pleine. Donc ça tourne
+		//Si non // Alors t'as pas de gagnant, et ta grille est pas pleine. Donc ça tourne
+		*/
 
-
+		cout << "\033[31m" << "FIN DU TOUR" << "\033[0m" << endl;
+		system("pause");
 		isPlayerTurn = !isPlayerTurn;
 	}//fin du while ici
 
 	//LOGIC END GAME
+	cout << "\033[95m" << "LOGIC END HERE" << "\033[0m" << endl;
+
 
 }
 
 
-void InsertJeton(char myTableau[line][column], int columPlayed, bool& isPlayerTurn)
+int InsertJeton(char myTableau[line][column], int columnPlayed, bool& isPlayerTurn)
 {
 	/* -1---2---3---4---5---6---7--
 	5  |   |   |   |   |   |   |   |
@@ -191,37 +210,24 @@ void InsertJeton(char myTableau[line][column], int columPlayed, bool& isPlayerTu
 	   ----------------------------*/
 	for (int i = 0; i < line; i++)//Check les lignes depuis le bas, aussi longtemps que i >=0, tu tournes 
 	{
-		cout << "\033[95m" << "INSERT JETON Je checke actuellement la ligne " << "\033[0m" << i << endl;
+		cout << "\033[95m" << "|-INSERT JETON-| Je checke actuellement la ligne [" << i << "] de la colonne [" << columnPlayed <<"]" << "\033[0m"  << endl;
 
-		if (myTableau[i][columPlayed] == ' ')//Si la case est vide
+		if (myTableau[i][columnPlayed] == ' ')//Si la case est vide
 		{
 			cout << "\033[95m" << "ton i checke = " << i << " et il est vide " << "\033[0m" << endl;
-			isPlayerTurn == true ? myTableau[i][columPlayed] = 'X' : myTableau[i][columPlayed] = 'O';
+			system("pause");
+			isPlayerTurn == true ? myTableau[i][columnPlayed] = 'X' : myTableau[i][columnPlayed] = 'O';
 			// myTableau[i][columPlayed] = (isPlayerTurn == true ? 'X' : 'O');
-
-			if (CheckVictory(myTableau, i, columPlayed, isPlayerTurn))
-			{
-				cout << "WINNER" << endl;
-				system("pause");
-				WinningScreen();
-				return;
-			}
-			break;
+			int tokenLine = i;
+			return tokenLine;
+			//break;
 		}
 		else
 		{
-			cout << "\033[95m" << "/!| ton i = " << i << " et il est PAS vide /!|" << "\033[0m" << endl;
+			cout << "\033[31m" << "/!| ton i = " << i << " n'est PAS vide /!|" << "\033[0m" << endl;
 
 		}
-
-
 	}
-
-	//if (CheckGridFull(myTableau,columnPlayed))
-	//{
-	//	//Ta grille est pleine
-	//	WinningScreen();
-	//}
 }
 
 bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, bool& isPlayerTurn)
@@ -248,38 +254,44 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 #pragma endregion
 
 #pragma region VERTICAL BAS
+
+		cout << "----------------Debut de VERTICAL BAS----------------------" << endl;
+		cout << "\033[31m" << "LinePlayed = ["<< linePlayed<< "]" <<" et columnPlayed = [" << columnPlayed <<"]" << "\033[0m" << endl;
+
 	for (int i = linePlayed - 1; i > linePlayed - 4 && i >= 0; i--)
 	{
-		cout << "\033[95m" << "Vertical bas : i = " << i << " " << "\033[0m" << endl;
-
 		if (myTableau[i][columnPlayed] == 'X')
 		{
-			system("pause");
-			cout << "Tu as trouve " << i + 1 << "victoire(s) en VERTICAL BAS" << endl;
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-
+			cout << "VictoryChecker_VerTicalBas = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de X" << endl;
 			break;
 		}
 	}
 
+	cout << "----------------FIN de VERTICAL BAS------------------------" << endl;
 	if (VictoryChecker >= 4)
 	{
+		cout << "Tu as 4 jetons verticaux ! ";
+		system("pause");
 		return true;//Le return continue t il la fonction ? Oui
 	}
+
 	VictoryChecker = 1;
 #pragma endregion
 
 #pragma region GAUCHE
 	for (int i = columnPlayed - 1; i > columnPlayed - 4 && i >= 0; i--)
 	{
-		cout << "\033[95m" << "GAUCHE : i = " << i << " " << "\033[0m" << endl;
+		//cout << "\033[95m" << "GAUCHE : i = " << i << " " << "\033[0m" << endl;
 
 		if (myTableau[i][columnPlayed] == 'X')
 		{
-			system("pause");
 			cout << "Tu as trouve " << i + 1 << "victoire(s) a GAUCHE" << endl;
 			VictoryChecker++;
 
@@ -422,7 +434,7 @@ void PrintTableau(char myTableau[line][column])
 {
 	system("cls");
 
-	cout << "\033[38;5;208m -1---2---3---4---5---6---7-- \033[0m" << endl;
+	cout << "\033[38;5;208m --1---2---3---4---5---6---7-- \033[0m" << endl;
 	for (int i = line - 1; i >= 0; i--) // rows
 	{
 		cout << " | ";
@@ -448,11 +460,12 @@ bool CheckGridFull(char myTableau[line][column])
 		if (myTableau[line][j] != ' ')
 		{
 			gridColumnChecker++;
-			cout << gridColumnChecker << "/" << column + 1 << " colonnes verifiees" << endl;
+			cout << gridColumnChecker << "/" << column << " colonnes verifiees" << endl;
 
 			if (gridColumnChecker >= column)
 			{
 				//Ta grille est full
+				cout  << "Ta grille est full" << endl;
 				return true;
 			}
 		}
