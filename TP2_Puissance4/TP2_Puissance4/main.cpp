@@ -50,12 +50,12 @@ void main()
 
 	//						 0    1   2    3    4   5   6 
 	char myTableau[line][column] = {
-							{'X',' ',' ', ' ', ' ',' ',' '},//0
-							{'X',' ',' ', ' ', ' ',' ',' '},//1
-							{' ',' ',' ', ' ', ' ',' ',' '},//2
-							{' ',' ',' ', ' ', ' ',' ',' '},//3
-							{' ',' ',' ', ' ', ' ',' ',' '},//4
-							{' ',' ',' ', ' ', ' ',' ',' '} };//5
+							{'X','O','X', 'O', 'X','O','X'},//0
+							{'O',' ','O', 'X', 'O',' ',' '},//1
+							{'X',' ','X', 'O', 'X',' ',' '},//2
+							{'O',' ','O', 'X', 'O',' ',' '},//3
+							{'X',' ','X', 'O', 'X',' ',' '},//4
+							{'O',' ','O', 'X', 'O',' ',' '} };//5
 
 	cout << "============================= LE TABLEAU =============================" << endl;
 	cout << "\033[31m************COLONNES***********\033[0m" << endl;
@@ -101,6 +101,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 	{
 		int columnPlayed = -1;
 		int tokenLine = -1;
+		int lastIARandom = -1;
 
 		if (isPlayerTurn)
 		{
@@ -120,13 +121,10 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 				cout << "Quelle colonne veux-tu jouer ? (1-7)" << endl;
 				cin >> columnPlayed;
 
-				if (checkColumnFull(myTableau, columnPlayed))
-				{
-					//Ta colonne columnPlayed est pleine. MISSING LOGIC HERE
+				cout << "\033[93m" << "Colonne pleine ? " << (checkColumnFull(myTableau, columnPlayed - 1) ? "Oui" : "Non") << "\033[0m" << endl;
 
-				}
-
-			} while (columnPlayed < 1 || columnPlayed > 7);
+				system("pause");
+			} while (columnPlayed < 1 || columnPlayed > 7 || checkColumnFull(myTableau, columnPlayed-1));
 
 			//InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
 			tokenLine = InsertJeton(myTableau, columnPlayed - 1, isPlayerTurn);
@@ -134,7 +132,6 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 #pragma region IA
 		else
 		{
-			int random = rand() % 7 + 1;//Va entre 1 et 7 
 			system("cls");
 
 			cout << "IA thinking." << endl;
@@ -148,14 +145,20 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 			cout << "IA thinking..." << endl;
 			Sleep(500);
 			system("cls");
+			do
+			{
+				int random = rand() % 7 + 1;//Va entre 1 et 7 
+				lastIARandom = random;
+				PrintTableau(myTableau);
+				cout << "\033[95m" << "La colonne visee est = (" << random << ") donc la [" << random - 1 << "]" << "\033[0m" << endl;
+				cout << "\033[93m" << "Colonne pleine ? " << (checkColumnFull(myTableau, lastIARandom - 1) ? "Oui" : "Non") << "\033[0m" << endl;
+				system("pause");
 
-			//cout << "\033[95m" << "Le random trouve = " << "\033[0m" << random << endl;
-			cout << "\033[95m" << "La colonne visee est = ("  << random << ") donc la [" << random-1 <<"]" << "\033[0m" << endl;
-			system("pause");
+			} while (checkColumnFull(myTableau, lastIARandom -1) == true);
+			//cout << "\033[95m" << "La colonne visee est = (" << lastIARandom << ") donc la [" << lastIARandom - 1 << "]" << "\033[0m" << endl;
 
-			//InsertJeton(myTableau, random, isPlayerTurn);
-			tokenLine = InsertJeton(myTableau, random-1, isPlayerTurn);
-			columnPlayed = random;
+			tokenLine = InsertJeton(myTableau, lastIARandom -1, isPlayerTurn);
+			columnPlayed = lastIARandom;
 		}
 #pragma endregion
 
@@ -168,6 +171,9 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 		if (CheckVictory(myTableau, tokenLine, columnPlayed-1, isPlayerTurn)) // verifier le gagnant
 		{
 			cout << "Tu as trouve un gagnant" << endl;
+			cout << "\033[93m" << "CheckVictory ? " << (CheckVictory(myTableau, tokenLine, columnPlayed - 1, isPlayerTurn) ? "True" : "False") << "\033[0m" << endl;
+
+			system("pause");
 			if (isPlayerTurn) 
 			{
 				cout << "Le gagnant est PLAYER" << endl;
@@ -194,12 +200,11 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 		isPlayerTurn = !isPlayerTurn;
 	}//fin du while ici
 
-	//LOGIC END GAME
-	cout << "\033[95m" << "LOGIC END MISSING HERE" << "\033[0m" << endl;
-
+	cout << "\033[31m" << "Je vais passer a lecran winning" << "\033[0m" << endl;
+	system("pause");
+	WinningScreen();
 
 }
-
 
 int InsertJeton(char myTableau[line][column], int columnPlayed, bool& isPlayerTurn)
 {
@@ -399,81 +404,114 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 		}
 	}
 
+	cout << "----------------FIN de DIA HAUT GAUCH------------------------" << endl;
+	cout << endl;
+
 #pragma endregion
 
 	VictoryChecker = 1;
 
 #pragma region DIA BAS GAUCHE
-	//DIA BAS GAUCHE
+	cout << "----------------Debut de DIA BAS GAUCHE----------------------" << endl;
+	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+
 	for (int i = linePlayed - 1, j = columnPlayed - 1; i >= 0 && j >= 0; i--, j--)
 	{
-		if (myTableau[i][j] == 'X')
+		if (myTableau[i][j] == currentSymboleLooking)
 		{
-			system("pause");
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "] et colonne verifiee [" << j << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-			cout << "Tu as trouve " << i + 1 << "victoire(s) en BAS GAUCHE" << endl;
+			cout << "VictoryChecker_DIABASGAUCHE = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
 		}
+
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons diagonaux ! ";
+			system("pause");
+			return true;
+		}
 	}
-	if (VictoryChecker >= 4)
-	{
-		return true;//Le return continue t il la fonction ? Oui
-	}
-	VictoryChecker = 1;
+
+	cout << "----------------FIN de DIA BAS GAUCHE------------------------" << endl;
+	cout << endl;
+	
 #pragma endregion
+
+	VictoryChecker = 1;
 
 #pragma region DIA HAUT DROIT
-	//DIA HAUT DROIT
-	for (int i = linePlayed, j = columnPlayed; i <= line && j <= column; i++, j++)
+	cout << "----------------Debut de DIA HAUT DROIT----------------------" << endl;
+	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+
+	for (int i = linePlayed+1, j = columnPlayed+1; i <= line && j <= column; i++, j++)
 	{
-		if (myTableau[i][j] == 'X')
+		if (myTableau[i][j] == currentSymboleLooking)
 		{
-			system("pause");
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "] et colonne verifiee [" << j << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-			cout << "Tu as trouve " << i + 1 << "victoire(s) en HAUT DROIT" << endl;
+			cout << "VictoryChecker_DIAHAUTDROIT = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
 		}
-	}
-	if (VictoryChecker >= 4)
-	{
-		return true;//Le return continue t il la fonction ? Oui
-	}
-	VictoryChecker = 1;
 
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons diagonaux ! ";
+			system("pause");
+			return true;
+		}
+	}
 
+	cout << "----------------FIN de DIA HAUT DROIT------------------------" << endl;
+	cout << endl;
 #pragma endregion
+	
+	VictoryChecker = 1;
 
 #pragma region DIA BAS DROIT
-	//DIA BAS DROIT
-	for (int i = linePlayed, j = columnPlayed; i >= 0 && j <= column; i--, j++)
+	cout << "----------------Debut de DIA BAS DROIT----------------------" << endl;
+	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+
+	for (int i = linePlayed-1, j = columnPlayed+1; i >= 0 && j <= column; i--, j++)
 	{
-		if (myTableau[i][j] == 'X')
+		if (myTableau[i][j] == currentSymboleLooking)
 		{
-			system("pause");
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "] et colonne verifiee [" << j << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-			cout << "Tu as trouve " << i + 1 << "victoire(s) en BAS DROIT" << endl;
+			cout << "VictoryChecker_DIABASDROIT = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
 		}
+
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons diagonaux ! ";
+			system("pause");
+			return true;
+		}
 	}
-	if (VictoryChecker >= 4)
-	{
-		return true;//Le return continue t il la fonction ? Oui
-	}
-	VictoryChecker = 1;
+	cout << "----------------FIN de DIA BAS DROIT------------------------" << endl;
+	cout << endl;
 #pragma endregion
 
 
 	cout << "\033[95m" << "---Tu as fait le tour des checkVictory et tu n'as trouve aucun gagnant----" << "\033[0m" << endl;
-	system("pause");
+	return false;
+	//system("pause");
 }
 
 void PrintTableau(char myTableau[line][column])
@@ -520,14 +558,22 @@ bool CheckGridFull(char myTableau[line][column])
 
 bool checkColumnFull(char myTableau[line][column], int columnPlayed)
 {
-	if (myTableau[line][columnPlayed] != ' ')
+	if (myTableau[line-1][columnPlayed] != ' ')
 	{
+		cout << "|checkColumnFull+| je regarde actuellement [" << line-1 << "][" << columnPlayed << "]" << endl;
+		cout << "|checkColumnFull+| La colonne contient " << myTableau[line-1][columnPlayed] << endl;
 		return true;//Colonne full
+	}
+	else 
+	{
+		cout << "|checkColumnFull-| La colonne vide contient : ->" << myTableau[line-1][columnPlayed] << "<-" << endl;
+		return false;//Comment ca je dois declarer un false ? C'est pas false par defaut MAX ? 
 	}
 }
 
 void WinningScreen()
 {
 	system("cls");
-	cout << " --------------WINNING SCREEN--------------" << endl;
+	//LOGIC END GAME
+	cout << "\033[95m" << "LOGIC END MISSING HERE" << "\033[0m" << endl;
 }
