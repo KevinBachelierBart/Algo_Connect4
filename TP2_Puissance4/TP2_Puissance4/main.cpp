@@ -150,7 +150,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 			system("cls");
 
 			//cout << "\033[95m" << "Le random trouve = " << "\033[0m" << random << endl;
-			cout << "\033[95m" << "La colonne visee est = " << "\033[0m" << random-1 << endl;
+			cout << "\033[95m" << "La colonne visee est = ("  << random << ") donc la [" << random-1 <<"]" << "\033[0m" << endl;
 			system("pause");
 
 			//InsertJeton(myTableau, random, isPlayerTurn);
@@ -168,6 +168,14 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 		if (CheckVictory(myTableau, tokenLine, columnPlayed-1, isPlayerTurn)) // verifier le gagnant
 		{
 			cout << "Tu as trouve un gagnant" << endl;
+			if (isPlayerTurn) 
+			{
+				cout << "Le gagnant est PLAYER" << endl;
+			}
+			else 
+			{
+				cout << "Le gagnant est AI" << endl;
+			}
 			break;
 		}
 		/*
@@ -187,7 +195,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 	}//fin du while ici
 
 	//LOGIC END GAME
-	cout << "\033[95m" << "LOGIC END HERE" << "\033[0m" << endl;
+	cout << "\033[95m" << "LOGIC END MISSING HERE" << "\033[0m" << endl;
 
 
 }
@@ -233,6 +241,7 @@ int InsertJeton(char myTableau[line][column], int columnPlayed, bool& isPlayerTu
 bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, bool& isPlayerTurn)
 {
 	int VictoryChecker = 1;
+	char currentSymboleLooking = isPlayerTurn ? 'X' : 'O';//astuce du LLM mais je voulais eviter de dupliquer mes if X || if O
 
 #pragma region QUELQUES DETAILS POUR MOI
 	/*
@@ -257,10 +266,11 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 
 		cout << "----------------Debut de VERTICAL BAS----------------------" << endl;
 		cout << "\033[31m" << "LinePlayed = ["<< linePlayed<< "]" <<" et columnPlayed = [" << columnPlayed <<"]" << "\033[0m" << endl;
+		cout << "currentSymboleLooking = " << currentSymboleLooking << endl;
 
 	for (int i = linePlayed - 1; i > linePlayed - 4 && i >= 0; i--)
 	{
-		if (myTableau[i][columnPlayed] == 'X')
+		if (myTableau[i][columnPlayed] == currentSymboleLooking)
 		{
 			cout << "\033[31m" << "Ligne verifiee = [" << i << "]" << "\033[0m" << endl;
 			VictoryChecker++;
@@ -269,93 +279,129 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 		}
 		else
 		{
-			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de X" << endl;
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
+		}
+
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons verticaux ! ";
+			system("pause");
+			return true;
 		}
 	}
 
 	cout << "----------------FIN de VERTICAL BAS------------------------" << endl;
-	if (VictoryChecker >= 4)
-	{
-		cout << "Tu as 4 jetons verticaux ! ";
-		system("pause");
-		return true;//Le return continue t il la fonction ? Oui
-	}
+	cout << endl;
 
-	VictoryChecker = 1;
+	
 #pragma endregion
+	
+	VictoryChecker = 1;
 
 #pragma region GAUCHE
+		cout << "----------------Debut de GAUCHE----------------------" << endl;
+		cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+		cout << "currentSymboleLooking = " << currentSymboleLooking << endl;
+
 	for (int i = columnPlayed - 1; i > columnPlayed - 4 && i >= 0; i--)
 	{
-		//cout << "\033[95m" << "GAUCHE : i = " << i << " " << "\033[0m" << endl;
 
-		if (myTableau[i][columnPlayed] == 'X')
+		if (myTableau[linePlayed][i] == currentSymboleLooking)
 		{
-			cout << "Tu as trouve " << i + 1 << "victoire(s) a GAUCHE" << endl;
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-
+			cout << "VictoryChecker_GAUCHE = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
 		}
-	}
 
-	if (VictoryChecker >= 4)
-	{
-		return true;//Le return continue t il la fonction ? Oui
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons Horizontaux ! ";
+			system("pause");
+			return true;
+		}
 	}
-	VictoryChecker = 1;
+	cout << "----------------FIN de GAUCHE------------------------" << endl;
+	cout << endl;
+
+	
 #pragma endregion
+	
+	VictoryChecker = 1;
 
 #pragma region DROITE
+	cout << "----------------Debut de DROITE----------------------" << endl;
+	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+
+	
 	for (int i = columnPlayed + 1; i < columnPlayed - 4 && i <= column; i++)
 	{
-		cout << "\033[95m" << "DROITE : i = " << i << " " << "\033[0m" << endl;
+		cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+		cout << "currentSymboleLooking = " << currentSymboleLooking << endl;
 
-		if (myTableau[i][columnPlayed] == 'X')
+		if (myTableau[line][i] == currentSymboleLooking)
 		{
-			system("pause");
-			cout << "Tu as trouve " << i + 1 << "victoire(s) a DROITE" << endl;
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-
+			cout << "VictoryChecker_DROITE = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
 		}
-	}
 
-	if (VictoryChecker >= 4)
-	{
-		return true;//Le return continue t il la fonction ? Oui
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons Horizontaux ! ";
+			system("pause");
+			return true;
+		}
 	}
-	VictoryChecker = 1;
+	cout << "----------------FIN de DROITE------------------------" << endl;
+	cout << endl;
+	
 #pragma endregion
+
+	VictoryChecker = 1;
 
 #pragma region DIA HAUT GAUCHE
-	//DIA HAUT GAUCHE
-	for (int i = linePlayed, j = columnPlayed; i <= line && j >= 0; i++, j--)
+	cout << "----------------Debut de DIA HAUT GAUCHE----------------------" << endl;
+	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
+
+	for (int i = linePlayed+1, j = columnPlayed-1; i <= line && j >= 0; i++, j--)
 	{
-		if (myTableau[i][j] == 'X')
+		if (myTableau[i][j] == currentSymboleLooking)
 		{
-			system("pause");
+			cout << "\033[31m" << "Ligne verifiee = [" << i << "] et colonne verifiee [" << j << "]" << "\033[0m" << endl;
 			VictoryChecker++;
-			cout << "Tu as trouve " << i + 1 << "victoire(s) en DIA HAUT GAUCHE" << endl;
+			cout << "VictoryChecker_DIAHAUTGAUCHE = " << VictoryChecker << endl;
+			cout << "*****************************************************" << endl;
 		}
 		else
 		{
+			cout << "myTableau[" << i << "][" << columnPlayed << "] ne contient pas de " << currentSymboleLooking << endl;
 			break;
+		}
+
+		if (VictoryChecker >= 4)
+		{
+			cout << "Tu as 4 jetons diagonaux ! ";
+			system("pause");
+			return true;
 		}
 	}
 
-	if (VictoryChecker >= 4)
-	{
-		return true;//Le return continue t il la fonction ? Oui
-	}
-	VictoryChecker = 1;
 #pragma endregion
+
+	VictoryChecker = 1;
 
 #pragma region DIA BAS GAUCHE
 	//DIA BAS GAUCHE
