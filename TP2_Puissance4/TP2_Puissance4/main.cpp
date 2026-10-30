@@ -231,6 +231,7 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 {
 	int VictoryChecker = 1;
 
+#pragma region QUELQUES DETAILS POUR MOI
 	/*
 	return horizontal()|| vertical()|| diagonal();
 	*/
@@ -247,6 +248,9 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	tour 3 i=0 > 0 DONC STOP
 	puis, i >= 0 pour ne pas vérifier une ligne négative
 	*/
+#pragma endregion
+
+#pragma region VERTICAL BAS
 	for (int i = linePlayed - 1; i > linePlayed - 4 && i >= 0; i--)
 	{
 		cout << "\033[95m" << "Vertical bas : i = " << i << " " << "\033[0m" << endl;
@@ -268,7 +272,58 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	{
 		return true;//Le return continue t il la fonction ? Oui
 	}
+	VictoryChecker = 1;
+#pragma endregion
 
+#pragma region GAUCHE
+	for (int i = columnPlayed - 1; i > columnPlayed - 4 && i >= 0; i--)
+	{
+		cout << "\033[95m" << "GAUCHE : i = " << i << " " << "\033[0m" << endl;
+
+		if (myTableau[i][columnPlayed] == 'X')
+		{
+			system("pause");
+			cout << "Tu as trouve " << i + 1 << "victoire(s) a GAUCHE" << endl;
+			VictoryChecker++;
+
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (VictoryChecker >= 4)
+	{
+		return true;//Le return continue t il la fonction ? Oui
+	}
+	VictoryChecker = 1;
+#pragma endregion
+
+#pragma region DROITE
+	for (int i = columnPlayed + 1; i < columnPlayed - 4 && i <= column; i++)
+	{
+		cout << "\033[95m" << "DROITE : i = " << i << " " << "\033[0m" << endl;
+
+		if (myTableau[i][columnPlayed] == 'X')
+		{
+			system("pause");
+			cout << "Tu as trouve " << i + 1 << "victoire(s) a DROITE" << endl;
+			VictoryChecker++;
+
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (VictoryChecker >= 4)
+	{
+		return true;//Le return continue t il la fonction ? Oui
+	}
+	VictoryChecker = 1;
+#pragma endregion
 	//DIA HAUT GAUCHE
 	for (int i = linePlayed, j = columnPlayed; i <= line && j >= 0; i++, j--)
 	{
@@ -338,6 +393,8 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	{
 		return true;
 	}
+
+
 }
 
 void PrintTableau(char myTableau[line][column])
