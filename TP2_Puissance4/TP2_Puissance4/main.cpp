@@ -533,18 +533,18 @@ bool CheckGridFull(char myTableau[line][column])
 
 	for (int j = 0; j < column; j++)
 	{
-		cout << "Je checke [" << j << "]" << endl;
+		//cout << "Je checke [" << j << "]" << endl;
 		if (myTableau[line - 1][j] == ' ')
 		{
-			cout << "Je suis dans [" << line - 1 << "][" << j << "] = ->" << myTableau[line - 1][j] << "<-" << endl;
-			cout << "Jai trouve [5][" << j << "] qui est vide" << endl;
+			//cout << "Je suis dans [" << line - 1 << "][" << j << "] = ->" << myTableau[line - 1][j] << "<-" << endl;
+			//cout << "Jai trouve [5][" << j << "] qui est vide" << endl;
 
 			return false;
 		}
 		else
 		{
 			gridColumnChecker++;
-			cout << gridColumnChecker << "/" << column << " colonnes pleines" << endl;
+			//cout << gridColumnChecker << "/" << column << " colonnes pleines" << endl;
 			if (gridColumnChecker == column)
 				return true;
 		}
