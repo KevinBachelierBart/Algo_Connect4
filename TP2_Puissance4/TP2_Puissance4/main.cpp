@@ -196,15 +196,16 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 		
 
 		cout << "\033[31m" << "FIN DU TOUR" << "\033[0m" << endl;
-		//system("pause");
+
 		isPlayerTurn = !isPlayerTurn;
 	}//fin du while ici
 
 	cout << "\033[31m" << "Je vais passer a lecran winning" << "\033[0m" << endl;
 	//system("pause");
+	
+	PrintTableau(myTableau);
+
 	EndingScreen(isPlayerTurn, CheckGridFull(myTableau));
-
-
 }
 
 int InsertJeton(char myTableau[line][column], int columnPlayed, bool& isPlayerTurn)
@@ -556,13 +557,13 @@ bool checkColumnFull(char myTableau[line][column], int columnPlayed)
 {
 	if (myTableau[line-1][columnPlayed] != ' ')
 	{
-		cout << "|checkColumnFull+| je regarde actuellement [" << line-1 << "][" << columnPlayed << "]" << endl;
-		cout << "|checkColumnFull+| La colonne contient " << myTableau[line-1][columnPlayed] << endl;
+		//cout << "|checkColumnFull+| je regarde actuellement [" << line-1 << "][" << columnPlayed << "]" << endl;
+		//cout << "|checkColumnFull+| La colonne contient " << myTableau[line-1][columnPlayed] << endl;
 		return true;//Colonne full
 	}
 	else 
 	{
-		cout << "|checkColumnFull-| La colonne vide contient : ->" << myTableau[line-1][columnPlayed] << "<-" << endl;
+		//cout << "|checkColumnFull-| La colonne vide contient : ->" << myTableau[line-1][columnPlayed] << "<-" << endl;
 		return false;//Comment ca je dois declarer un false ? C'est pas false par defaut MAX ? 
 	}
 }
@@ -570,7 +571,6 @@ bool checkColumnFull(char myTableau[line][column], int columnPlayed)
 void EndingScreen(bool isPlayerTurn, bool CheckGridFull)
 {
 	system("pause");
-	system("cls");
 
 	cout << endl;
 	cout << "\033[96m";
