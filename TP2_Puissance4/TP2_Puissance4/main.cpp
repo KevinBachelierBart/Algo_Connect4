@@ -506,7 +506,7 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 #pragma endregion
 	
 	cout << "\033[95m" << "---Tu as fait le tour des checkVictory et tu n'as trouve aucun gagnant----" << "\033[0m" << endl;
-	system("pause");
+	//system("pause");
 	return false;
 }
 
