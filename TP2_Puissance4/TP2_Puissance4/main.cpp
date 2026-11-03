@@ -10,8 +10,8 @@ const int column = 7;
 //FONCTIONS PROTOTYPE-----------------------------------------------------------------------------------|
 void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn);//----------------------------------|
 int InsertJeton(char myTableau[line][column], int columPlayed, bool& isPlayerTurn);//-------------------|
-void PrintTableau(char myTableau[line][column]);//------------------------------------------------------|
-bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, bool& isPlayerTurn);//|
+void PrintTableau(const char myTableau[line][column]);//------------------------------------------------------|
+bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, char currentSymboleLooking);//|
 void EndingScreen(bool isPlayerTurn, bool CheckGridFull);//---------------------------------------------|
 bool CheckGridFull(char myTableau[line][column]);//-----------------------------------------------------|
 bool checkColumnFull(char myTableau[line][column], int columnPlayed);//---------------------------------|
@@ -171,7 +171,7 @@ void GameplayTurn(char myTableau[line][column], bool& isPlayerTurn)
 		cout << "columnPlayed = [" << columnPlayed-1 << "]"<< endl;
 
 		//Tu as insere le jeton. maintenant faut 
-		if (CheckVictory(myTableau, tokenLine, columnPlayed-1, isPlayerTurn)) // verifier le gagnant
+		if (CheckVictory(myTableau, tokenLine, columnPlayed-1, isPlayerTurn ? 'X' : 'O')) // verifier le gagnant
 		{
 			cout << "Tu as trouve un gagnant" << endl;
 
@@ -246,10 +246,10 @@ int InsertJeton(char myTableau[line][column], int columnPlayed, bool& isPlayerTu
 	}
 }
 
-bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, bool& isPlayerTurn)
+bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed, char currentSymboleLooking)
 {
 	int VictoryChecker = 1;
-	char currentSymboleLooking = isPlayerTurn ? 'X' : 'O';//astuce du LLM mais je voulais eviter de dupliquer mes if X || if O
+	// char currentSymboleLooking = isPlayerTurn ? 'X' : 'O';//astuce du LLM mais je voulais eviter de dupliquer mes if X || if O
 
 #pragma region QUELQUES DETAILS POUR MOI
 	/*
@@ -272,9 +272,9 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 
 #pragma region VERTICAL BAS
 
-		cout << "----------------Debut de VERTICAL BAS----------------------" << endl;
-		cout << "\033[31m" << "LinePlayed = ["<< linePlayed<< "]" <<" et columnPlayed = [" << columnPlayed <<"]" << "\033[0m" << endl;
-		cout << "currentSymboleLooking = " << currentSymboleLooking << endl;
+	cout << "----------------Debut de VERTICAL BAS----------------------" << endl;
+	cout << "\033[31m" << "LinePlayed = ["<< linePlayed<< "]" <<" et columnPlayed = [" << columnPlayed <<"]" << "\033[0m" << endl;
+	cout << "currentSymboleLooking = " << currentSymboleLooking << endl;
 
 	for (int i = linePlayed - 1; i > linePlayed - 4 && i >= 0; i--)
 	{
@@ -414,7 +414,7 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	cout << "----------------Debut de DIA BAS DROIT----------------------" << endl;
 	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
 
-	for (int i = linePlayed - 1, j = columnPlayed + 1; i >= 0 && j <= column; i--, j++)
+	for (int i = linePlayed - 1, j = columnPlayed + 1; i >= 0 && j < column; i--, j++)
 	{
 		if (myTableau[i][j] == currentSymboleLooking)
 		{
@@ -478,7 +478,7 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	cout << "----------------Debut de DIA HAUT DROIT----------------------" << endl;
 	cout << "\033[31m" << "LinePlayed = [" << linePlayed << "]" << " et columnPlayed = [" << columnPlayed << "]" << "\033[0m" << endl;
 
-	for (int i = linePlayed+1, j = columnPlayed+1; i <= line && j <= column; i++, j++)
+	for (int i = linePlayed+1, j = columnPlayed+1; i < line && j < column; i++, j++)
 	{
 		if (myTableau[i][j] == currentSymboleLooking)
 		{
@@ -510,7 +510,7 @@ bool CheckVictory(char myTableau[line][column], int linePlayed, int columnPlayed
 	return false;
 }
 
-void PrintTableau(char myTableau[line][column])
+void PrintTableau(const char myTableau[line][column])
 {
 	system("cls");
 
@@ -570,7 +570,7 @@ bool checkColumnFull(char myTableau[line][column], int columnPlayed)
 
 void EndingScreen(bool isPlayerTurn, bool CheckGridFull)
 {
-	system("pause");
+	//system("pause");
 
 	cout << endl;
 	cout << "\033[96m";
